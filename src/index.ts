@@ -1,43 +1,12 @@
-import { fast_sum, fast_average, fast_sort } from '../pkg/quickly.js';
+// Point d'entrée principal de la bibliothèque Quickly
+export { QuicklyArray } from './typescript/core/Array';
 
-// Interface pour notre bibliothèque
-export interface PerformanceLib {
-  sum: (numbers: number[]) => Promise<number>;
-  average: (numbers: number[]) => Promise<number>;
-  sort: (numbers: number[]) => Promise<number[]>;
-}
+// Export des types
+export * from './typescript/types';
 
-// Classe principale de la bibliothèque
-export class MyPerformanceLib implements PerformanceLib {
-  constructor() {
-    console.log('🦀 Rust/WASM library initialized!');
-  }
+// Export des bindings WASM (pour usage avancé)
+export { WasmBindings } from './typescript/wasm/bindings';
 
-  /**
-   * Calcule la somme d'un tableau de nombres avec Rust
-   */
-  public async sum(numbers: number[]): Promise<number> {
-    return fast_sum(new Float64Array(numbers));
-  }
-
-  /**
-   * Calcule la moyenne d'un tableau de nombres avec Rust
-   */
-  public async average(numbers: number[]): Promise<number> {
-    return fast_average(new Float64Array(numbers));
-  }
-
-  /**
-   * Trie un tableau de nombres avec Rust
-   */
-  public async sort(numbers: number[]): Promise<number[]> {
-    // fast_sort attend un Vec<f64>, on passe directement le tableau
-    return Array.from(fast_sort(new Float64Array(numbers)));
-  }
-}
-
-// Export par défaut pour faciliter l'utilisation
-export default MyPerformanceLib;
-
-// Export des fonctions individuelles pour un usage direct
-export { fast_sum, fast_average, fast_sort };
+// Version et métadonnées
+export const VERSION = '1.0.0';
+export const DESCRIPTION = 'Une bibliothèque TypeScript avec du Rust pour la performance';
