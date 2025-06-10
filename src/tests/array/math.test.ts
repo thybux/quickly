@@ -1,140 +1,134 @@
-import { QuicklyArray } from '../../typescript/core/Array';
+import { describe, it, expect, beforeAll } from '@jest/globals';
+import * as wasm from '../pkg/quickly';
 
-interface TestResult {
-  name: string;
-  passed: boolean;
-  expected: any;
-  actual: any;
-  error?: string;
-}
+describe('WASM Math Functions', () => {
+  beforeAll(async () => {
+    // Initialiser WASM si nécessaire
+  });
 
-class ArrayMathTests {
-  private results: TestResult[] = [];
-
-  private assert(name: string, expected: any, actual: any, tolerance = 0.0001) {
-    let passed = false;
-    let error: string | undefined;
-
-    try {
-      if (Array.isArray(expected) && Array.isArray(actual)) {
-        passed = expected.length === actual.length &&
-          expected.every((val, i) => Math.abs(val - actual[i]) < tolerance);
-      } else if (typeof expected === 'number' && typeof actual === 'number') {
-        passed = Math.abs(expected - actual) < tolerance;
-      } else {
-        passed = expected === actual;
-      }
-    } catch (e) {
-      error = e instanceof Error ? e.message : String(e);
-      passed = false;
-    }
-
-    this.results.push({
-      name,
-      passed,
-      expected,
-      actual,
-      error
-    });
-  }
-
-  async testArrayAddition() {
-    console.log('🧪 Test: Addition de deux arrays...');
-
-    const arr1 = new QuicklyArray([1, 2, 3, 4, 5]);
-    const arr2 = new QuicklyArray([10, 20, 30, 40, 50]);
-
-    const result = arr1.add(arr2.values);
-    const expected = [11, 22, 33, 44, 55];
-
-    this.assert('Array addition', expected, result);
-  }
-
-  async testScalarAddition() {
-    console.log('🧪 Test: Addition scalaire...');
-
-    const arr = new QuicklyArray([1, 2, 3, 4, 5]);
-    const result = arr.addScalar(10);
-    const expected = [11, 12, 13, 14, 15];
-
-    this.assert('Scalar addition', expected, result);
-  }
-
-  async testArraySum() {
-    console.log('🧪 Test: Somme d\'array...');
-
-    const arr = new QuicklyArray([1, 2, 3, 4, 5]);
-    const result = arr.sum();
-    const expected = 15;
-
-    this.assert('Array sum', expected, result);
-  }
-
-  async testEdgeCases() {
-    console.log('🧪 Test: Cas limites...');
-
-    // Array vide
-    const emptyArr = new QuicklyArray([]);
-    this.assert('Empty array sum', 0, emptyArr.sum());
-
-    // Arrays de tailles différentes
-    const arr1 = new QuicklyArray([1, 2, 3]);
-    const arr2 = [10, 20, 30, 40, 50];
-    const result = arr1.add(arr2);
-    this.assert('Different size arrays', [11, 22, 33], result);
-
-    // Nombres négatifs
-    const negArr = new QuicklyArray([-1, -2, -3]);
-    this.assert('Negative numbers sum', -6, negArr.sum());
-  }
-
-  async runAll() {
-    console.log('🚀 Lancement des tests Array Math...\n');
-
-    await this.testArrayAddition();
-    await this.testScalarAddition();
-    await this.testArraySum();
-    await this.testEdgeCases();
-
-    this.printResults();
-  }
-
-  private printResults() {
-    console.log('\n📊 Résultats des tests Array Math:\n');
-
-    this.results.forEach(result => {
-      const status = result.passed ? '✅ PASS' : '❌ FAIL';
-      console.log(`${status} ${result.name}`);
-
-      if (!result.passed) {
-        console.log(`  Attendu: ${JSON.stringify(result.expected)}`);
-        console.log(`  Reçu:    ${JSON.stringify(result.actual)}`);
-        if (result.error) {
-          console.log(`  Erreur:  ${result.error}`);
-        }
-      }
-      console.log('');
+  describe('Addition', () => {
+    it('should add two arrays element-wise', () => {
+      const a = [1, 2, 3, 4];
+      const b = [5, 6, 7, 8];
+      const result = wasm.array_add(a, b);
+      expect(Array.from(result)).toEqual([6, 8, 10, 12]);
     });
 
-    const passedTests = this.results.filter(r => r.passed).length;
-    const totalTests = this.results.length;
+    it('should handle arrays of different lengths', () => {
+      const a = [1, 2, 3];
+      const b = [4, 5];
+      const result = wasm.array_add(a, b);
+      expect(Array.from(result)).toEqual([5, 7]);
+    });
 
-    console.log(`📈 Résumé: ${passedTests}/${totalTests} tests réussis`);
+    it('should add scalar to array', () => {
+      const arr = [1, 2, 3, 4];
+      const scalar = 10;
+      const result = wasm.array_add_scalar(arr, scalar);
+      expect(Array.from(result)).toEqual([11, 12, 13, 14]);
+    });
 
-    if (passedTests === totalTests) {
-      console.log('🎉 Tous les tests Array Math sont passés !');
-    } else {
-      console.log('⚠️  Certains tests ont échoué.');
-      process.exit(1);
-    }
-  }
-}
+    it('should sum all elements', () => {
+      const arr = [1, 2, 3, 4, 5];
+      const result = wasm.array_sum(arr);
+      expect(result).toBe(15);
+    });
+  });
 
-// Export pour être utilisé par le runner de tests principal
-export { ArrayMathTests };
+  describe('Subtraction', () => {
+    it('should subtract two arrays element-wise', () => {
+      const a = [10, 8, 6, 4];
+      const b = [1, 2, 3, 4];
+      const result = wasm.array_subtract(a, b);
+      expect(Array.from(result)).toEqual([9, 6, 3, 0]);
+    });
 
-// Si exécuté directement, lancer les tests
-if (require.main === module) {
-  const testSuite = new ArrayMathTests();
-  testSuite.runAll().catch(console.error);
-}
+    it('should subtract scalar from array', () => {
+      const arr = [10, 20, 30, 40];
+      const scalar = 5;
+      const result = wasm.array_subtract_scalar(arr, scalar);
+      expect(Array.from(result)).toEqual([5, 15, 25, 35]);
+    });
+  });
+
+  describe('Multiplication', () => {
+    it('should multiply two arrays element-wise', () => {
+      const a = [2, 3, 4, 5];
+      const b = [1, 2, 3, 4];
+      const result = wasm.array_multiply(a, b);
+      expect(Array.from(result)).toEqual([2, 6, 12, 20]);
+    });
+
+    it('should multiply array by scalar', () => {
+      const arr = [1, 2, 3, 4];
+      const scalar = 3;
+      const result = wasm.array_multiply_scalar(arr, scalar);
+      expect(Array.from(result)).toEqual([3, 6, 9, 12]);
+    });
+  });
+
+  describe('Division', () => {
+    it('should divide two arrays element-wise', () => {
+      const a = [10, 15, 20, 25];
+      const b = [2, 3, 4, 5];
+      const result = wasm.array_divide(a, b);
+      expect(Array.from(result)).toEqual([5, 5, 5, 5]);
+    });
+
+    it('should divide array by scalar', () => {
+      const arr = [10, 20, 30, 40];
+      const scalar = 2;
+      const result = wasm.array_divide_scalar(arr, scalar);
+      expect(Array.from(result)).toEqual([5, 10, 15, 20]);
+    });
+
+    it('should throw on division by zero scalar', () => {
+      const arr = [1, 2, 3];
+      expect(() => wasm.array_divide_scalar(arr, 0)).toThrow();
+    });
+
+    it('should throw on empty arrays', () => {
+      expect(() => wasm.array_divide([], [1, 2, 3])).toThrow();
+    });
+  });
+
+  describe('Statistics', () => {
+    const testArray = [1, 2, 3, 4, 5];
+
+    it('should calculate mean correctly', () => {
+      const result = wasm.array_mean(testArray);
+      expect(result).toBe(3);
+    });
+
+    it('should find minimum value', () => {
+      const result = wasm.array_min(testArray);
+      expect(result).toBe(1);
+    });
+
+    it('should find maximum value', () => {
+      const result = wasm.array_max(testArray);
+      expect(result).toBe(5);
+    });
+
+    it('should calculate variance correctly', () => {
+      const result = wasm.array_variance(testArray);
+      expect(result).toBeCloseTo(2.5, 5); // variance of [1,2,3,4,5]
+    });
+
+    it('should calculate standard deviation correctly', () => {
+      const result = wasm.array_std(testArray);
+      expect(result).toBeCloseTo(Math.sqrt(2.5), 5);
+    });
+
+    it('should throw on empty array for statistics', () => {
+      expect(() => wasm.array_mean([])).toThrow();
+      expect(() => wasm.array_min([])).toThrow();
+      expect(() => wasm.array_max([])).toThrow();
+    });
+
+    it('should throw on insufficient data for variance/std', () => {
+      expect(() => wasm.array_variance([1])).toThrow();
+      expect(() => wasm.array_std([1])).toThrow();
+    });
+  });
+});

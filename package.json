@@ -32,5 +32,8 @@
   "files": [
     "dist",
     "pkg"
-  ]
+  ],
+  "dependencies": {
+    "jest": "^30.0.0"
+  }
 }
