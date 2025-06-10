@@ -1,19 +1,2 @@
-# Fichiers générés par la compilation
-dist/
-pkg/
-target/
-
-# Dépendances Node.js
-*/node_modules/*
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Fichiers de cache
-.npm
-.eslintcache
-.parcel-cache/
-
-# Logs
-*.log
-logs/
+./ts/node_modules
+./rust/target
