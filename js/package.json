@@ -5,23 +5,38 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "clean": "rm -rf dist pkg",
+    "clean": "rm -rf dist pkg coverage",
     "build:rust": "wasm-pack build --target nodejs --out-dir pkg",
     "build:ts": "webpack --mode production",
     "build": "npm run clean && npm run build:rust && npm run build:ts && npm run copy:wasm",
     "copy:wasm": "cp pkg/*.wasm dist/",
-    "test:add": "npm run build && npx tsc src/tests/array/math.test.ts --outDir dist --target ES2020 --module commonjs --moduleResolution node --esModuleInterop --skipLibCheck && cp pkg/*.wasm dist/ && node dist/tests/array/math.test.js",
-    "bench:add": "npm run build && npx tsc src/tests/benchmarks/array-add.bench.ts --outDir dist --target ES2020 --module commonjs --moduleResolution node --esModuleInterop --skipLibCheck && cp pkg/*.wasm dist/ && node dist/tests/benchmarks/array-add.bench.js"
+    "test": "npm run build && jest",
+    "test:watch": "npm run build && jest --watch",
+    "test:coverage": "npm run build && jest --coverage",
+    "test:verbose": "npm run build && VERBOSE=true jest --verbose",
+    "bench": "npm run build && jest --testPathPattern=bench --verbose",
+    "bench:watch": "npm run build && jest --testPathPattern=bench --watch",
+    "test:math": "npm run build && jest tests/array/math.test.ts",
+    "test:extended": "npm run build && jest tests/array/extended-math.test.ts",
+    "dev": "npm run build:rust && webpack --mode development --watch",
+    "lint": "echo 'Linting not configured yet'",
+    "format": "echo 'Formatting not configured yet'",
+    "perf:quick": "npm run build && jest tests/benchmarks/array-operations.bench.ts --testTimeout=60000",
+    "perf:full": "npm run build && jest --testPathPattern=bench --testTimeout=120000 --verbose"
   },
   "keywords": [
     "performance",
     "rust",
     "wasm",
-    "typescript"
+    "typescript",
+    "data-science",
+    "arrays",
+    "mathematics"
   ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@jest/types": "^30.0.0",
     "@types/node": "^22.15.30",
     "copy-webpack-plugin": "^12.0.2",
     "ts-loader": "^9.5.2",
@@ -31,7 +46,8 @@
   },
   "files": [
     "dist",
-    "pkg"
+    "pkg",
+    "README.md"
   ],
   "dependencies": {
     "jest": "^30.0.0"
