@@ -10,7 +10,7 @@ import {
   array_max,
   array_std,
   array_variance
-} from '../../pkg/quickly';
+} from '../../../../pkg/quickly';
 
 describe('Extended Math Operations (Direct WASM)', () => {
   describe('Subtraction', () => {

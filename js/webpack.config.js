@@ -1,3 +1,4 @@
+// js/webpack.config.js
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 
@@ -18,7 +19,11 @@ module.exports = {
   plugins: [
     new CopyPlugin({
       patterns: [
-        { from: 'pkg/*.wasm', to: '[name][ext]' },
+        {
+          from: 'pkg/*.wasm',
+          to: '[name][ext]',
+          noErrorOnMissing: true,
+        },
       ],
     }),
   ],
@@ -28,6 +33,7 @@ module.exports = {
     library: {
       type: 'commonjs2',
     },
+    clean: true,
   },
   target: 'node',
   externals: {
@@ -36,4 +42,7 @@ module.exports = {
     'fs': 'commonjs fs'
   },
   mode: 'production',
+  stats: {
+    errorDetails: true,
+  }
 };

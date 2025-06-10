@@ -4,7 +4,7 @@ pkg/
 target/
 
 # Dépendances Node.js
-./js/node_modules/
+*/node_modules/*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -17,49 +17,3 @@ yarn-error.log*
 # Logs
 *.log
 logs/
-
-# Environnement et configuration locale
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Fichiers IDE/Éditeur
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# Fichiers système
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Fichiers temporaires
-*.tmp
-*.temp
-*.bak
-*.backup
-
-# Coverage de tests
-coverage/
-*.lcov
-
-# Fichiers de build temporaires
-*.tsbuildinfo
-
-# Webpack
-.cache/
-
-# Rust spécifique
-Cargo.lock  # Pour les libs, on ignore le Cargo.lock
-**/*.rs.bk
-
-# Fichiers WASM temporaires
-*.wasm.map
